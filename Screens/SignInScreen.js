@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from "react-native";
 
-export default function SignInScreen(setUser) {
+export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -24,11 +24,7 @@ export default function SignInScreen(setUser) {
         " https://express-airbnb-api.herokuapp.com/user/log_in",
         { email: email, password: password }
       );
-      if (response.data.token) {
-        setUser(response.data.token);
-      }
     } catch (error) {
-      console.log(error.message);
       console.log(error.response);
       if (error.response.status === 400 || error.response.status === 401) {
         setErrorMessage("Mauvais email et/ou mot de passe");

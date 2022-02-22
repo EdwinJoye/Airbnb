@@ -14,20 +14,11 @@ function App() {
   const [confirmpassword, setConfirmpassword] = useState("");
   const [formulaire, setformulaire] = useState(false);
 
-  const setUser = (token) => {
-    if (token) {
-      Cookies.set("userToken", token, { expires: 5 });
-    } else {
-      Cookies.remove("userToken");
-    }
-    setToken(token);
-  };
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="SignIp">
-          {(props) => <SignInScreen {...props} setUser={setUser} />}
+          {(props) => <SignInScreen {...props} />}
         </Stack.Screen>
         <Stack.Screen name="SignUp">
           {(props) => (
