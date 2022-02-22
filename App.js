@@ -1,20 +1,54 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-export default function App() {
+import SignInScreen from "./Screens/SignInScreen";
+import SignUpScreen from "./Screens/SignUpScreen";
+
+const Stack = createNativeStackNavigator();
+
+function App() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmpassword, setConfirmpassword] = useState("");
+  const [formulaire, setformulaire] = useState(false);
+
+  const setUser = (token) => {
+    if (token) {
+      Cookies.set("userToken", token, { expires: 5 });
+    } else {
+      Cookies.remove("userToken");
+    }
+    setToken(token);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="SignIp">
+          {(props) => <SignInScreen {...props} setUser={setUser} />}
+        </Stack.Screen>
+        <Stack.Screen name="SignUp">
+          {(props) => (
+            <SignUpScreen
+              {...props}
+              setUsername={setUsername}
+              usernameValue={username}
+              setEmail={setEmail}
+              emailValue={email}
+              setPassword={setPassword}
+              passwordValue={password}
+              setConfirmpassword={setConfirmpassword}
+              confirmpasswordValue={confirmpassword}
+              setformulaire={setformulaire}
+              formulaire={formulaire}
+            />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
