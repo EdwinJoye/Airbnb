@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/core";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
-import { axios } from "axios";
+import axios from "axios";
 
 import {
   Button,
@@ -11,21 +12,25 @@ import {
   Image,
   ScrollView,
 } from "react-native";
+import AsyncStorageLib from "@react-native-async-storage/async-storage";
 
-export default function SignInScreen() {
+export default function SignInScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
   const handleSubmit = async (event) => {
+    console.log(email, password);
     try {
       event.preventDefault();
       const response = await axios.post(
-        " https://express-airbnb-api.herokuapp.com/user/log_in",
+        "https://express-airbnb-api.herokuapp.com/user/log_in",
         { email: email, password: password }
       );
+      console.log(response);
+      await AsyncStorage.setItem("myToken", response.data.token);
+      navigation.navigate("Home");
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
       if (error.response.status === 400 || error.response.status === 401) {
         setErrorMessage("Mauvais email et/ou mot de passe");
       }
@@ -62,9 +67,12 @@ export default function SignInScreen() {
               borderBottomWidth: 1,
               marginBottom: 30,
             }}
+            value={email}
+            autoCapitalize="none"
             placeholder="Email"
-            onChange={(event) => setEmail(event.target.value)}
+            onChangeText={(text) => setEmail(text)}
           />
+
           <TextInput
             style={{
               padding: 10,
@@ -72,8 +80,10 @@ export default function SignInScreen() {
               borderBottomWidth: 1,
               marginBottom: 30,
             }}
+            autoCapitalize="none"
+            value={password}
             placeholder="Password"
-            onChange={(event) => setPassword(event.target.value)}
+            onChangeText={(text) => setPassword(text)}
             secureTextEntry={true}
           />
           <View
@@ -93,11 +103,14 @@ export default function SignInScreen() {
                 marginTop: 10,
               }}
             >
-              <Button onPress={handleSubmit} title="Sign" />
+              <Button onPress={handleSubmit} title="Sign In" />
             </View>
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate("SignUp");
+                console.log(handleSubmit);
+                console.log(setEmail);
+                console.log(setPassword);
               }}
             >
               <Text style={{ color: "grey", fontSize: 12 }}>
