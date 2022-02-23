@@ -32,14 +32,11 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (token === null) {
-          const response = await axios.get(
-            `https://express-airbnb-api.herokuapp.com/rooms`
-          );
-          setData(response.data);
-        } else {
-          navigation.navigate("SignIn");
-        }
+        const response = await axios.get(
+          `https://express-airbnb-api.herokuapp.com/rooms`
+        );
+        setData(response.data);
+        gation.navigate("SignIn");
       } catch (error) {
         console.log(error.response.status);
         console.log(error.response.data);
@@ -72,17 +69,13 @@ export default function HomeScreen({ navigation }) {
           renderItem={({ item }) => {
             console.log(data);
             return (
-              <View style={styles.offerContainer}>
+              <View>
                 <Text>
-                  <Text style={styles.title}>{item.title}</Text>;
-                  <Text style={styles.price}>{item.price}</Text>
-                  <Text style={styles.reviews}>{item.reviews} reviews</Text>
+                  <Text>{item.title}</Text>;<Text>{item.price}</Text>
+                  <Text>{item.reviews} reviews</Text>
                 </Text>
-                <Image
-                  style={styles.illustration}
-                  source={item.user.account.photo.url}
-                />
-                <Image style={styles.avatar} source={item.photos[0]} />
+                <Image source={item.user.account.photo.url} />
+                <Image source={item.photos[0]} />
               </View>
             );
           }}
