@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./Screens/HomeScreen";
 import SignInScreen from "./Screens/SignInScreen";
 import SignUpScreen from "./Screens/SignUpScreen";
+import RoomScreen from "./Screens/RoomScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -18,17 +19,22 @@ function App() {
 
   const setToken = async (token) => {
     if (token) {
-      await AsyncStorage.setItem("myToken", token);
+      await AsyncStorage.setItem("userToken", token);
     } else {
-      await AsyncStorage.removeItem("myoken");
+      await AsyncStorage.removeItem("userToken");
     }
 
     setUserToken(token);
   };
 
   useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
-      const userToken = await AsyncStorage.getItem("myToken");
+      // We should also handle error for production apps
+      const userToken = await AsyncStorage.getItem("userToken");
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
       setUserToken(userToken);
 
       setIsLoading(false);
@@ -37,10 +43,15 @@ function App() {
     bootstrapAsync();
   }, []);
 
+  if (isLoading === true) {
+    // We haven't finished checking for the token yet
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Tab.Screen name="Home">
+        <Tab.Screen name="Haaa">
           {() => (
             <Stack.Navigator>
               <Stack.Screen name="Home" component={HomeScreen}></Stack.Screen>
@@ -48,12 +59,14 @@ function App() {
           )}
         </Tab.Screen>
         <Stack.Screen name="SignIn">
-          {(props) => <SignInScreen {...props} setToken={setToken} />}
+          {() => <SignInScreen setToken={setToken} />}
         </Stack.Screen>
         <Stack.Screen name="SignUp">
-          {(props) => <SignUpScreen {...props} setToken={setToken} />}
+          {() => <SignUpScreen setToken={setToken} />}
         </Stack.Screen>
-        {/* <Tab.Screen name="My profile"></Tab.Screen> */}
+        <Stack.Screen name="My Room">
+          {() => <RoomScreen setToken={setToken} />}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );

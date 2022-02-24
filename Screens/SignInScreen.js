@@ -27,7 +27,7 @@ export default function SignInScreen({ navigation }) {
         { email: email, password: password }
       );
       console.log(response);
-      await AsyncStorage.setItem("myToken", response.data.token);
+      await AsyncStorage.setItem("userToken", response.data.token);
       navigation.navigate("Home");
     } catch (error) {
       console.log(error);

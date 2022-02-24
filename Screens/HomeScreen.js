@@ -2,17 +2,17 @@ import { useNavigation } from "@react-navigation/core";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { ImageBackground } from "react-native";
+import { Entypo } from "@expo/vector-icons";
 
 import {
-  Button,
   Text,
-  TextInput,
   View,
   TouchableOpacity,
   Image,
-  ScrollView,
   ActivityIndicator,
   FlatList,
+  Dimensions,
 } from "react-native";
 
 export default function HomeScreen({ navigation }) {
@@ -33,7 +33,7 @@ export default function HomeScreen({ navigation }) {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `https://express-airbnb-api.herokuapp.com/rooms`
+          "https://express-airbnb-api.herokuapp.com/rooms"
         );
         setData(response.data);
         gation.navigate("SignIn");
@@ -46,14 +46,30 @@ export default function HomeScreen({ navigation }) {
     fetchData();
   }, []);
 
+  //CREATION D'UN TABLEAU POUR RECUPERER LES ETOILES//
+  const generateStars = (numberOfStars) => {
+    let starsArrays = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < numberOfStars) {
+        starsArrays.push(
+          <Entypo name="star" size={22} color="#DAA520" key={i} />
+        );
+      } else {
+        starsArrays.push(<Entypo name="star" size={22} color="grey" key={i} />);
+      }
+    }
+    return starsArrays;
+  };
   return !isLoading ? (
     <ActivityIndicator size="small" color="#0000ff" />
   ) : (
-    <ScrollView style={{ flex: 1, backgroundColor: "white", padding: 30 }}>
+    <View style={{ flex: 1, backgroundColor: "white", padding: 30 }}>
       <View
         style={{
           alignItems: "center",
-          backgroundColor: "yellow",
+          borderBottomWidth: 1,
+          borderBottomColor: "grey",
+          marginBottom: 10,
         }}
       >
         <Image
@@ -67,20 +83,78 @@ export default function HomeScreen({ navigation }) {
           data={data}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => {
-            console.log(data);
             return (
-              <View>
-                <Text>
-                  <Text>{item.title}</Text>;<Text>{item.price}</Text>
-                  <Text>{item.reviews} reviews</Text>
+              <TouchableOpacity>
+                <Text style={{ flexDirection: "column", paddingTop: 20 }}>
+                  <View>
+                    <ImageBackground
+                      source={item.photos[0]}
+                      style={{
+                        height: 200,
+                        width: Dimensions.get("window").width * 0.9,
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: "black",
+                          height: 40,
+                          width: 70,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginBottom: 10,
+                        }}
+                      >
+                        <Text style={{ color: "white" }}>{item.price}</Text>
+                      </View>
+                    </ImageBackground>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      height: 80,
+                      paddingTop: 5,
+                      borderBottomColor: "grey",
+                      borderBottomWidth: 1,
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        height: 80,
+                      }}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        ellipsizeMode="end"
+                        style={{ overflow: "scroll", width: 245 }}
+                      >
+                        {item.title}
+                      </Text>
+                      <Text>{item.reviews} reviews</Text>
+                      <View style={{ flexDirection: "row" }}>
+                        {generateStars(item.ratingValue)}
+                      </View>
+                    </View>
+                    <View style={{ height: 80 }}>
+                      <Image
+                        style={{
+                          borderRadius: 50,
+                        }}
+                        source={{
+                          height: 70,
+                          width: 70,
+                          uri: item.user.account.photo.url,
+                        }}
+                      />
+                    </View>
+                  </View>
                 </Text>
-                <Image source={item.user.account.photo.url} />
-                <Image source={item.photos[0]} />
-              </View>
+              </TouchableOpacity>
             );
           }}
         />
       </View>
-    </ScrollView>
+    </View>
   );
 }
