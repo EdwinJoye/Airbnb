@@ -6,6 +6,7 @@ import { Platform } from "react-native";
 import { StyleSheet } from "react-native-web";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./Screens/HomeScreen";
+import MapScreen from "./Screens/MapScreen";
 import SignInScreen from "./Screens/SignInScreen";
 import SignUpScreen from "./Screens/SignUpScreen";
 import RoomScreen from "./Screens/RoomScreen";
@@ -51,21 +52,17 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Tab.Screen name="Haaa">
-          {() => (
-            <Stack.Navigator>
-              <Stack.Screen name="Home" component={HomeScreen}></Stack.Screen>
-            </Stack.Navigator>
-          )}
-        </Tab.Screen>
+        <Stack.Screen name="Home">
+          {(props) => <HomeScreen setToken={setToken} />}
+        </Stack.Screen>
         <Stack.Screen name="SignIn">
-          {() => <SignInScreen setToken={setToken} />}
+          {(props) => <SignInScreen setToken={setToken} />}
+        </Stack.Screen>
+        <Stack.Screen name="Room">
+          {(props) => <RoomScreen {...props} setToken={setToken} />}
         </Stack.Screen>
         <Stack.Screen name="SignUp">
-          {() => <SignUpScreen setToken={setToken} />}
-        </Stack.Screen>
-        <Stack.Screen name="My Room">
-          {() => <RoomScreen setToken={setToken} />}
+          {(props) => <SignUpScreen {...props} setToken={setToken} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

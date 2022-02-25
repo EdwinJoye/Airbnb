@@ -15,7 +15,8 @@ import {
   Dimensions,
 } from "react-native";
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ props }) {
+  const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [data, setData] = useState();
@@ -36,7 +37,8 @@ export default function HomeScreen({ navigation }) {
           "https://express-airbnb-api.herokuapp.com/rooms"
         );
         setData(response.data);
-        gation.navigate("SignIn");
+        // console.log(response.data);
+        // navigation.navigate("SignIn");
       } catch (error) {
         console.log(error.response.status);
         console.log(error.response.data);
@@ -84,7 +86,17 @@ export default function HomeScreen({ navigation }) {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("Room", {
+                    id: item._id,
+                    title: item.title,
+                    location: item.location,
+                    photo: item.user.account.photo.url,
+                    photo2: item.photos[0],
+                  });
+                }}
+              >
                 <Text style={{ flexDirection: "column", paddingTop: 20 }}>
                   <View>
                     <ImageBackground
@@ -126,7 +138,6 @@ export default function HomeScreen({ navigation }) {
                     >
                       <Text
                         numberOfLines={1}
-                        ellipsizeMode="end"
                         style={{ overflow: "scroll", width: 245 }}
                       >
                         {item.title}
